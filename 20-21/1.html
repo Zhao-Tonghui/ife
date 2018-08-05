@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<input id="name" type="text" />    
+	<button id="submit-btn">Submit</button>
+	<script type="text/javascript">
+		
+		var sub=document.getElementById("submit-btn");
+		sub.onclick=function(){
+			console.log(document.getElementById("name").value);
+		}
+		document.onkeydown=function(){
+			if(event.keyCode==13){
+				console.log(document.getElementById("name").value);
+			}
+			if(event.keyCode==27){
+				document.getElementById("name").value="";
+				console.log(document.getElementById("name").value);
+			}
+		}
+	</script>
+</body>
+</html>

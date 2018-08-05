@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		div{
+			width: 480px;
+			height: 480px;
+			background:url(q.jpg);
+		}
+	</style>
+</head>
+<body>
+	<div id="erik"></div>
+	<script type="text/javascript">
+		window.onload=function(){
+			var er=document.getElementById("erik");
+			var y=480;
+			function gif(){
+				er.style.backgroundPositionY="-"+y+"px";
+				y>8160?y=480:y+=480;
+			}
+			setInterval(gif,100);
+			console.log("1");
+		}
+	</script>
+</body>
+</html>

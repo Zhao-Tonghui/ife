@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<p id="time"></p>
+	<script type="text/javascript">
+		var p=document.getElementById("time");
+		function getWeekday(day){
+			switch(day){
+				case 1: return "Monday";break;
+				case 2: return "Tuesday";break;
+				case 3: return "Wednesday";break;
+				case 4: return "Thursday";break;
+				case 5: return "Friday";break;
+				case 6: return "Saturday";break;
+				case 0: return "Sunday";break;
+			}
+		}
+		function setWei(num){
+			if(num<10){
+				return '0'.concat(num);
+			}
+			else return num;
+		}
+		function pmam(hour){
+			if(hour>12){
+				hour=hour-12;
+			}
+			return hour;
+		}
+		function theEndTime(){
+			var time=new Date();
+			var year=time.getFullYear();
+			var month=setWei(time.getMonth());
+			var day=setWei(time.getDate());
+			var week=getWeekday(time.getDay());
+			var h=setWei(time.getHours());
+			var m=setWei(time.getMinutes());
+			var s=setWei(time.getSeconds());
+			if(h<=12){
+				p.innerHTML=year+'-'+month+'-'+day+week+h+':'+m+':'+s+'AM';				
+			}else{
+				h=pmam(h);
+				p.innerHTML=year+'-'+month+'-'+day+week+h+':'+m+':'+s+'PM';
+			}
+		}
+		setInterval(theEndTime,1000);
+	</script>
+</body>
+</html>

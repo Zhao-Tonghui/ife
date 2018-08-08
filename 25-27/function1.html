@@ -28,7 +28,7 @@
 		function theEndTime(){
 			var time=new Date();
 			var year=time.getFullYear();
-			var month=setWei(time.getMonth());
+			var month=setWei(time.getMonth()+1);
 			var day=setWei(time.getDate());
 			var week=getWeekday(time.getDay());
 			var h=setWei(time.getHours());

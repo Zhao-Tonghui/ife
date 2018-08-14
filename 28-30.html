@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="jquery-3.3.1.js"></script>
         <style type="text/css">
         .wrapper{
             width: 200px;
@@ -21,6 +20,13 @@
         }
         ul li{
             list-style: none;
+
+        }
+        li:hover{
+            background-color:#F35595 ;
+        }
+        .active{
+            background-color: #85807F ;
         }
         </style>
     </head>
@@ -33,23 +39,66 @@
         var emailInput=document.getElementById('email-input');
         var postfixList = ['163.com', 'gmail.com', '126.com', 'qq.com', '263.net'];
         var theUl=document.getElementById('email-sug-wrapper');
-        var chooseIndex=0;
+        var nowSelectTipIndex = 0;
+        // 增加一个变量，用于存储当前选中的提示Li的序号
 
         window.onload=function(){
             emailInput.focus();
         }
-        emailInput.onkeyup = function() {
+        emailInput.onkeyup = function(event) {
     //获取用户输入，生成提示框中的提示内容，将提示内容添加到email-sug-wrapper中
     //控制email-sug-wrapper的显示/隐藏状态
-            var gi=getInput();
-            var sl=setLi(gi);
-            controlVisibility(sl);
-    }
+    // enter 13 上38 下40 esc 27
+            if((event.keyCode==13||event.keyCode==38||event.keyCode==40)&&emailInput.value!=""){
+                listenKey(event.keyCode);
+            }else if(event.keyCode==27){
+                emailInput.select();
+            }else{
+                var gi=getInput();
+                var sl=setLi(gi);
+                controlVisibility(sl);
+                resetState();
+            }
+        }
 
+// 监听特殊3个键的键盘事件，这个事件可能就是inputDom的输入监听，也有可能是另外一个，请自己测试后判断
+function listenKey(key) {    
+    if (key==38) {
+        if (nowSelectTipIndex==0){
+            nowSelectTipIndex=theUl.childNodes.length-1;
+        } else {
+            nowSelectTipIndex--;
+        }
+    }
+    if(key==40) {
+        if (nowSelectTipIndex==theUl.childNodes.length-1) {
+            nowSelectTipIndex=0;
+        } else {
+            nowSelectTipIndex++;
+        }
+    }
+    if (key==13) {
+        //从当前提示框中选第 nowSelectTipIndex 个Li，将其HTML内容解码后填到input中
+        emailInput.value=theUl.childNodes[nowSelectTipIndex].innerHTML;
+        isHidden(theUl);
+    }
+    setClass();
+}
+        function resetState() {//重置选中状态
+            //将 nowSelectTipIndex 设为0
+            nowSelectTipIndex=0;
+        }
+
+        function setClass(){
+            for(let i=0;i<theUl.childNodes.length;i++){
+                theUl.childNodes[i].className="";
+            }
+            theUl.childNodes[nowSelectTipIndex].className="active";
+        }
         function getInput() {
             //获取用户输入
             //if 用户输入含有@ {用来拼接的用户输入内容 = 只使用@之前的字符串}
-            var email=emailInput.conue.trim();
+            var email=emailInput.value.trim();
             return email; 
         }   
 
@@ -65,17 +114,6 @@
                     theUl.removeChild(del);
                 }
             }
-
-            var ar=new Array();
-            ar=con.split("");
-            var special=con.indexOf("@");
-            if(special>0){
-                 for(let i=special;i<ar.length;i++){
-                        ar.pop();
-                }
-            }
-            con=ar.join("");
-
             var before="";
             var later;
             if(con.indexOf("@")!=-1){          // 存在@
@@ -87,36 +125,35 @@
             }
             var count=0;
             for(let i in postfixList){
-                if(postfixList[i].indexOf(later)==0){
-                    var p=document.createElement('p');
-                    p.innerHTML=before+"@"+postfixList[i];  
-                    
-                    ar.unshift(p.innerHTML);
+                if(postfixList[i].indexOf(later)==0){//存在@后缀
+                    var li=document.createElement('li');
+                    li.innerHTML=before+'@'+postfixList[i];
+                    theUl.appendChild(li);
                 }else{
                     count++;
                 }
             }
             if(count==postfixList.length){
-                for(let j in postfixList){
-                    var p=document.createElement('p');
-                    p.innerHTML=before+"@"+postfixList[j];  
-                    ar.unshift(p.innerHTML);
+                for(let j in postfixList){//数组中不存在
+                    var li=document.createElement('li');
+                    li.innerHTML=before+'@'+postfixList[j];
+                    theUl.appendChild(li);
                 }
             }
-            return theList;
-        }
-
-
-            for(let i=0;i<postfixList.length;i++){
-                if(con){
-                var li=document.createElement('li');
-                li.innerHTML=con+'@'+postfixList[i];
-                theUl.appendChild(li);
-                }
-            }
+            setClass();
             return theUl;
         }
 
+        theUl.onclick=function(e){//监听鼠标点击
+            e=e || window.event;
+            e.target=e.target || e.srcElement;
+            if(e.target.nodeName.toLowerCase()=='li'){
+                var tar=e.target.innerHTML;
+                emailInput.value=tar;
+                isHidden(theUl);
+            }
+        }
+    
 
         function controlVisibility(con) {
             if (getInput()=="") {
